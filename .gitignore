@@ -66,3 +66,19 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+# 抓取探针，临时快照
+.probe/
+
+# 运行时数据
+/data/*.db
+!/data/demo.db
+/out/
+.vs/
+
+# 测试代码
+.scratch/
+
+# 本地设计稿，不进版本库
+docs/框架设计-*.md
+docs/*.pdf
