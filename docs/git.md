@@ -76,7 +76,7 @@ feat(db): 增加详情队列查询
 
 - 架构边界：parse、util、proto 是否碰了 net/store/view；view 是否碰了 SQL；网络是否只出现在 `net/http.cpp`；SQL 是否只出现在 `store/db.cpp`；`web/server.cpp` 是否有业务逻辑。
 - C++14：有没有 C++17 特性。
-- 错误处理：是否 `bool` + `err`，有没有忽略返回值。
+- 错误处理：是否使用 nc::Status，是否忽略返回值。
 - 命名：`nc`、PascalCase、snake_case、`DbItem`/`ItemState`。
 - 生成物：有没有把 build/、.vs/、*.db 带进来。
 - 无关改动：有没有顺手格式化、顺手重构。
