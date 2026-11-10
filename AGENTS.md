@@ -6,7 +6,7 @@
 
 ## 1. 项目概要
 
-seu-noticard：把东南大学教务处、学生处的通知抓下来，抽成卡片，用本地网页/桌面程序按主题展示；支持已读和稍后提醒。
+seu-noticard：抓取东南大学教务处、学生处的通知，抽取出卡片，用本地网页/桌面程序按主题展示；支持已读和稍后提醒。
 技术栈：
 - 后端：C++14 + 本地 HTTP 服务 + SQLite 单文件
 - 前端：内嵌 HTML/CSS/JS，由本地 HTTP 服务提供
@@ -18,7 +18,7 @@ seu-noticard：把东南大学教务处、学生处的通知抓下来，抽成�
 
 1. 默认只做：解释、代码评审、设计讨论、测试用例设计、文档、排错建议。
 2. **除非有清晰无异议指令**（如"写 / 给我代码 / 实现这个"），**否则永远不要主动写实现代码**（`.cpp` / `.h` / `.js` / `.css`）。
-3. 即使被要求，也只给最小片段，并逐行解释；不要整文件生成。
+3. 即使被要求写代码，也只给最小片段，并逐行解释，不直接写入文件；不要整文件生成。
 4. **测试代码例外**，但只允许写在 `.scratch/`（已 gitignore），并满足：
   - 只调用已有接口，不包含被测模块的实现；
   - 表驱动，一个用例一个断言，期望值写在用例旁边；
@@ -66,7 +66,7 @@ seu-noticard：把东南大学教务处、学生处的通知抓下来，抽成�
 ## 3. 环境与构建
 
 - 目标平台：Windows 10/11；**VS2026 + v141 工具集**；x64；C++14；`/utf-8`。
-- 构建只在 Windows 侧做。**若当前环境是 WSL/Linux，不要尝试编译，也不要声称"编译通过"**；可以做静态审查、Python 脚本、HTML 结构分析。
+- 构建只在 Windows 侧做。**若当前环境是 WSL/Linux，不要尝试编译，也不要声称"编译通过"**；可以做静态审查、Python 脚本、HTML 结构分析。一切临时脚本不能进 Git。
 - 构建与运行命令见 `README.md`。
 - 生成物不进 git：`build/`、`.vs/`、`data/*.db`（`demo.db` 除外）、`.probe/`、`out/`。
 
@@ -75,20 +75,20 @@ seu-noticard：把东南大学教务处、学生处的通知抓下来，抽成�
 - **只用 C++14**。禁止 `std::filesystem`、`std::optional`、`std::variant`、`std::string_view`、结构化绑定、`if constexpr`、`inline` 变量。
 - **不引入第三方库**。唯一例外：`third_party/sqlite3.c`。不要用 vcpkg、gtest、nlohmann、fmt。
 - **不用 `std::regex`**；字段抽取用手写扫描。
-- 错误处理：`bool` 返回 + `std::string* err` 出参；**不抛异常**。
+- 错误处理：使用 `nc::Status` 传递状态和错误。默认不使用异常处理机制。
 - 字符串：`std::string` 存 UTF-8；不用 `std::wstring`；只有 Win32 宽字符 API 边界做转换。
 - 内存：RAII；Pimpl 用 `std::unique_ptr`；**禁止裸 `new/delete`**。
 - 命名：命名空间 `nc`；类型 PascalCase；函数/变量 snake_case；Pimpl 指针 `p_`。数据行类型叫 `DbItem`，状态枚举叫 `ItemState`。
 - 时间：日期用 `"YYYY-MM-DD"` 字符串（TEXT）；时刻用 Unix 秒（INTEGER）。
 - 注释写"为什么"，用中文；标识符用英文。
 
-## 5. 架构边界（review 必查）
+## 5. 架构边界（review 时检查）
 
 - `parse/*`、`util/*`、`proto/*`：纯函数，不许调 `net` / `store` / `view`。
 - `view/*`：不许查数据库、不许拼 SQL。
 - 网络调用只允许出现在 `net/http.cpp`；SQL 只允许出现在 `store/db.cpp`。
 - `web/server.cpp`：只读请求、调业务、写响应，**不许有业务逻辑**。
-- `model/types.h` 和各模块 `.h` 是冻结接口：改之前先把文档改对，并说明影响。
+- `model/types.h` 和各模块 `.h` 接口是冻结接口。更改后必须要更正文档，并说明影响。
 - 新增 `.cpp` 必须加进 `CMakeLists.txt` 的 `add_executable`，否则不会编译。
 
 ## 6. 目录
@@ -111,7 +111,7 @@ seu-noticard：把东南大学教务处、学生处的通知抓下来，抽成�
 
 ## 9. Git
 
-- **不主动 commit / push**；操作前先列出命令和影响，等用户确认。
+- **永远不主动 commit / push**；操作前先列出命令和影响，等用户确认。
 - 不改写已推送的历史，不 `force push`。
 - 一次提交只做一件事；提交前看 `git status`，确认没有生成物。
 - 分支、提交信息、PR 规则见 `docs/git.md`。
