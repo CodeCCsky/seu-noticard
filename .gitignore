@@ -67,6 +67,9 @@ vcpkg_installed/
 Testing/
 .cache/
 
+# vscode 配置
+.vscode
+
 # 抓取探针，临时快照
 .probe/
 
